@@ -1,0 +1,11 @@
+
+/*add in missing percents for each var*/
+data _null_;
+ set sashelp.vcolumn(keep=libname memname name type
+ where=(upcase(libname)="&lib." and upcase(memname)="&dsn.")) end=last;
+ if _n_=1 then call execute('proc sql;create table _miss as select ');
+ if type='char' then call execute(cat('sum(',name,'="")/count(*) as ',name));
+  else call execute(cat('sum(',name,'=.)/count(*) as ',name));
+ if last then call execute("from &lib..&dsn.;quit;");
+  else call execute(',');
+run;
